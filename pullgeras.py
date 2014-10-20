@@ -1,27 +1,47 @@
 #!/usr/bin/env python
-# checkeew.py
+# pullgeras.py
 # Copyright (C) ContinuumBridge Limited, 2013-14 - All Rights Reserved
 # Unauthorized copying of this file, via any medium is strictly prohibited
 # Proprietary and confidential
 # Written by Peter Claydon
 #
-gerasurl = 'http://geras.1248.io/'
+"""
+Pulls data from a Geras time-series database. 
+There are two main options:
 
-# Include the Dropbox SDK
-#from dropbox.client import DropboxClient, DropboxOAuth2Flow, DropboxOAuth2FlowNoRedirect
-#from dropbox.rest import ErrorResponse, RESTSocketError
-#from dropbox.datastore import DatastoreError, DatastoreManager, Date, Bytes
-from pprint import pprint
+--list lists all time series in the Geras database
+--get gets a specified time series
+
+In all cases a Geras key must be given using the --key option. If no
+key if given on the command line, the user will be prompted for it, in
+which case it will not be visible on the screen.
+
+--list requires one parameter:
+
+--list all lists all time series in the database
+-- list <pattern> lists all time series with a string that matches <pattern>
+
+--get can optionally be supplied with a start and end time, using:
+
+--start <time>
+--end <time>
+
+The time parameter must be in the format: '18-10-2014 11:05:02'. The quotes
+are required.
+
+Examples (you need to use your own key for these to work):
+
+./pullgeras.py --key c685297d8c0f710e3bd1c8e771eb8d3d --list all
+./pullgeras.py --key c685297d8c0f710e3bd1c8e771eb8d3d --list BID8
+./pullgeras.py --key c485f97d8c0f410e3bdbc8e771eb8d2d --get /BID8/Kitchen/binary
+./pullgeras.py --key c485f97d8c0f410e3bdbc8e771eb8d2d --get /BID8/Kitchen/binary --start '2014-10-15 09:00:00' --end '2014-10-18 09:00:00'
+
+"""
+gerasurl = 'http://geras.1248.io/'
 import requests
-from urllib import urlencode
-from requests.auth import HTTPBasicAuth
-from datetime import datetime
 import json
 import time
-import sys
 import click
-from os import rename
-from os.path import expanduser
 import os, sys
 
 def nicetime(timeStamp):
