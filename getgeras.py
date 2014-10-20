@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-# pullgeras.py
+# getgeras.py
 # Copyright (C) ContinuumBridge Limited, 2013-14 - All Rights Reserved
 # Unauthorized copying of this file, via any medium is strictly prohibited
 # Proprietary and confidential
 # Written by Peter Claydon
 #
 """
-Pulls data from a Geras time-series database. 
+get data from a Geras time-series database. 
 There are two main options:
 
 --list lists all time series in the Geras database
@@ -31,10 +31,10 @@ are required.
 
 Examples (you need to use your own key for these to work):
 
-./pullgeras.py --key c685297d8c0f710e3bd1c8e771eb8d3d --list all
-./pullgeras.py --key c685297d8c0f710e3bd1c8e771eb8d3d --list BID8
-./pullgeras.py --key c485f97d8c0f410e3bdbc8e771eb8d2d --get /BID8/Kitchen/binary
-./pullgeras.py --key c485f97d8c0f410e3bdbc8e771eb8d2d --get /BID8/Kitchen/binary --start '2014-10-15 09:00:00' --end '2014-10-18 09:00:00'
+./getgeras.py --key c685297d8c0f710e3bd1c8e771eb8d3d --list all
+./getgeras.py --key c685297d8c0f710e3bd1c8e771eb8d3d --list BID8
+./getgeras.py --key c485f97d8c0f410e3bdbc8e771eb8d2d --get /BID8/Kitchen/binary
+./getgeras.py --key c485f97d8c0f410e3bdbc8e771eb8d2d --get /BID8/Kitchen/binary --start '2014-10-15 09:00:00' --end '2014-10-18 09:00:00'
 
 """
 gerasurl = 'http://geras.1248.io/'
