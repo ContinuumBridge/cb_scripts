@@ -20,7 +20,7 @@ import json
 import time
 import sys
 import click
-from os import rename
+from os import rename, remove
 from shutil import move
 from os.path import expanduser
 
@@ -65,6 +65,20 @@ def changeLine(key, value):
             if not replaced:
                 fo.write(newline)
     move(tmpfile, THISBRIDGE)
+
+def changeHostname(bridgeName, mount):
+    tmpfile = "hosts.tmp"
+    fileName = mount + "/etc/hostname"
+    with open(fileName, "w") as f:
+        f.write(bridgeName + "\n")
+    fileName = mount + "/etc/hosts"
+    with open(fileName, "r") as fi:
+        with open(tmpfile, "w") as fo:
+            for line in fi:
+                if "127.0.1.1" in line:
+                    line = "127.0.1.1   " + bridgeName + "\n"
+                fo.write(line)
+    move(tmpfile, fileName)
 
 def keyExists(key):
     found = False
@@ -163,13 +177,15 @@ def cb(bridge, mount, user, password, name):
                 changeLine("CB_BRIDGE_URI", content["resource_uri"])
                 changeLine("CB_BRIDGE_NAME", content["name"])
                 changeLine("CB_BID", content["cbid"])
-                data = {"name": "BID" + content["cbid"][3:]}
+                bridgeName = "BID" + content["cbid"][3:]
+                data = {"name": "BID" + bridgeName}
                 print "name: ", data
                 url = ADDRESS + getBridgeEnv("CB_BRIDGE_URI")
                 r = requests.patch(url, data=json.dumps(data), headers=headers, cookies=cookies)
                 checkget(r.status_code, 202, "rename", "bridge", sessionid, True)
                 content = json.loads(r.content)
                 changeLine("CB_BRIDGE_NAME", content["name"])
+                changeHostname(bridgeName, mount)
                 print "Created new bridge, ID:", content["cbid"]
         elif action == "patch":
             url = ADDRESS + getBridgeEnv("CB_BRIDGE_URI")
@@ -177,6 +193,7 @@ def cb(bridge, mount, user, password, name):
             checkget(r.status_code, 202, action, "bridge", sessionid, True)
             content = json.loads(r.content)
             changeLine("CB_BRIDGE_NAME", content["name"])
+            changeHostname(content["name"], mount)
         elif action == "get":
             url = ADDRESS + getBridgeEnv("CB_BRIDGE_URI")
             r = requests.get(url, data=json.dumps(data), headers=headers, cookies=cookies)
